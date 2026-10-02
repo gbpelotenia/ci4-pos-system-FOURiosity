@@ -1,0 +1,54 @@
+CREATE DATABASE IF NOT EXISTS ci4_pos CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE ci4_pos;
+
+CREATE TABLE users (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  username VARCHAR(50) NOT NULL UNIQUE,
+  full_name VARCHAR(100) NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  avatar VARCHAR(255) NULL,
+  role ENUM('admin','staff') NOT NULL DEFAULT 'staff',
+  created_at DATETIME NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE products (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(120) NOT NULL,
+  price DECIMAL(12,2) NOT NULL DEFAULT 0.00,
+  stock_quantity INT UNSIGNED NOT NULL DEFAULT 0,
+  image VARCHAR(255) NULL,
+  created_at DATETIME NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE customers (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  full_name VARCHAR(120) NOT NULL,
+  email VARCHAR(150) NULL,
+  phone VARCHAR(30) NULL,
+  created_at DATETIME NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE sales (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  product_id INT UNSIGNED NOT NULL,
+  customer_id INT UNSIGNED NULL,
+  staff_id INT UNSIGNED NOT NULL,
+  quantity INT UNSIGNED NOT NULL,
+  unit_price DECIMAL(12,2) NOT NULL,
+  total_price DECIMAL(12,2) NOT NULL,
+  created_at DATETIME NULL,
+  updated_at DATETIME NULL,
+  PRIMARY KEY (id),
+  KEY sales_product_id_foreign (product_id),
+  KEY sales_customer_id_foreign (customer_id),
+  KEY sales_staff_id_foreign (staff_id),
+  CONSTRAINT sales_product_id_foreign FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  CONSTRAINT sales_customer_id_foreign FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT sales_staff_id_foreign FOREIGN KEY (staff_id) REFERENCES users(id) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
