@@ -16,9 +16,12 @@ class Products extends BaseController
 
     public function index()
     {
+        $db = db_connect();
         return view('products/index', [
             'title' => 'Products',
-            'products' => $this->products->orderBy('id', 'DESC')->findAll(),
+            'products' => $this->products->select('products.*, categories.name AS category_name, suppliers.name AS supplier_name')->join('categories', 'categories.id = products.category_id', 'left')->join('suppliers', 'suppliers.id = products.supplier_id', 'left')->orderBy('products.id', 'DESC')->findAll(),
+            'categories' => $db->table('categories')->orderBy('name')->get()->getResultArray(),
+            'suppliers' => $db->table('suppliers')->orderBy('name')->get()->getResultArray(),
         ]);
     }
 
@@ -27,6 +30,7 @@ class Products extends BaseController
         $rules = [
             'name' => 'required|min_length[2]|max_length[120]',
             'price' => 'required|decimal|greater_than_equal_to[0]',
+            'cost_price' => 'required|decimal|greater_than_equal_to[0]',
             'stock_quantity' => 'required|integer|greater_than_equal_to[0]',
         ];
         if (! $this->validate($rules)) {
@@ -41,7 +45,10 @@ class Products extends BaseController
         $this->products->insert([
             'name' => trim((string) $this->request->getPost('name')),
             'price' => (float) $this->request->getPost('price'),
+            'cost_price' => (float) $this->request->getPost('cost_price'),
             'stock_quantity' => (int) $this->request->getPost('stock_quantity'),
+            'category_id' => $this->nullableId('category_id'),
+            'supplier_id' => $this->nullableId('supplier_id'),
             'image' => $image,
         ]);
 
@@ -58,6 +65,7 @@ class Products extends BaseController
         $rules = [
             'name' => 'required|min_length[2]|max_length[120]',
             'price' => 'required|decimal|greater_than_equal_to[0]',
+            'cost_price' => 'required|decimal|greater_than_equal_to[0]',
             'stock_quantity' => 'required|integer|greater_than_equal_to[0]',
         ];
         if (! $this->validate($rules)) {
@@ -72,7 +80,10 @@ class Products extends BaseController
         $data = [
             'name' => trim((string) $this->request->getPost('name')),
             'price' => (float) $this->request->getPost('price'),
+            'cost_price' => (float) $this->request->getPost('cost_price'),
             'stock_quantity' => (int) $this->request->getPost('stock_quantity'),
+            'category_id' => $this->nullableId('category_id'),
+            'supplier_id' => $this->nullableId('supplier_id'),
         ];
         if ($image !== null) {
             $data['image'] = $image;
@@ -113,5 +124,11 @@ class Products extends BaseController
         $name = $file->getRandomName();
         $file->move($dir, $name);
         return $name;
+    }
+
+    private function nullableId(string $field): ?int
+    {
+        $value = $this->request->getPost($field);
+        return $value === null || $value === '' ? null : (int) $value;
     }
 }

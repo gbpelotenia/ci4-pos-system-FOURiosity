@@ -16,3 +16,4 @@ require APPPATH . 'Config/products.php';
 require APPPATH . 'Config/customers.php';
 require APPPATH . 'Config/sales.php';
 require APPPATH . 'Config/dashboard.php';
+require APPPATH . 'Config/business.php';

@@ -7,6 +7,7 @@
             <a href="<?= site_url('customers') ?>">Customers</a>
             <a href="<?= site_url('sales') ?>">Sales</a>
             <a href="<?= site_url('users') ?>">Staff</a>
+            <a href="<?= site_url('/#expenses') ?>">Expenses</a>
         </div>
         <div class="nav-user">
             <span><?= esc(session()->get('full_name')) ?></span>
