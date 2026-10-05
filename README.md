@@ -5,7 +5,7 @@ A student-friendly CodeIgniter 4 Point of Sale System covering the three group m
 - **Mendoza:** Authentication and Staff Management
 - **Catangay:** Product and Customer Management
 - **Mantes:** Sales, Dashboard, Layout, and Navigation
-- - **Pelotenia:** Database, Compilation, Repository
+- **Pelotenia:** Database, Compilation, Repository
 
 ## Features
 
